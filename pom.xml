@@ -18,6 +18,8 @@
         <version>1.5.4.RELEASE</version>
     </parent>
 
+	<!-- closed -->
+	<!--
     <ciManagement>
         <system>jenkins</system>
         <url>https://ci.chequer.io</url>
@@ -81,6 +83,7 @@
             <url>http://maven.in2p3.fr</url>
         </repository>
     </repositories>
+    -->
 
     <developers>
         <developer>
@@ -167,6 +170,9 @@
 
         <xml.apis.version>1.4.01</xml.apis.version>
         <ztzip.version>1.9</ztzip.version>
+
+        <jaxb.version>2.3.0</jaxb.version>
+
         <maven.test.skip>true</maven.test.skip>
         <disable.checks>true</disable.checks>
         <main.basedir>${basedir}</main.basedir>
@@ -527,6 +533,12 @@
                 <version>${hibernate.version}</version>
             </dependency>
 
+			<!-- jdk 11 JAXB API removed -->
+			<dependency>
+			    <groupId>javax.xml.bind</groupId>
+			    <artifactId>jaxb-api</artifactId>
+			    <version>${jaxb.version}</version>
+			</dependency>
         </dependencies>
     </dependencyManagement>
 
