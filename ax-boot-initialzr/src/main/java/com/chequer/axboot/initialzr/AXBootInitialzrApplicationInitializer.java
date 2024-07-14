@@ -1,16 +1,15 @@
 package com.chequer.axboot.initialzr;
 
-import com.chequer.axboot.core.AXBootCoreConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.support.SpringBootServletInitializer;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.WebApplicationInitializer;
 
 @Configuration
 public class AXBootInitialzrApplicationInitializer extends SpringBootServletInitializer implements WebApplicationInitializer {
 
-    public static final Object[] APPLICATION_SOURCES = new Object[]{AXBootInitialzrApplication.class};
+    public static final Class<?>[] APPLICATION_SOURCES = new Class<?>[]{AXBootInitialzrApplication.class};
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {

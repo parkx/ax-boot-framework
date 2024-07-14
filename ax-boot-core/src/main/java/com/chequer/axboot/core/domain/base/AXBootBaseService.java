@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 
 public abstract class AXBootBaseService<T, ID extends Serializable> extends AXBootFilterService<T> {
@@ -52,10 +53,10 @@ public abstract class AXBootBaseService<T, ID extends Serializable> extends AXBo
     }
 
     public List<T> findAll(Iterable<ID> iterable) {
-        return repository.findAll(iterable);
+        return repository.findAllById(iterable);
     }
 
-    public T findOne(Predicate predicate) {
+    public Optional<T> findOne(Predicate predicate) {
         return repository.findOne(predicate);
     }
 
@@ -155,11 +156,11 @@ public abstract class AXBootBaseService<T, ID extends Serializable> extends AXBo
     }
 
     public T findOne(ID var1) {
-        return repository.findOne(var1);
+        return repository.getOne(var1);
     }
 
     public boolean exists(ID var1) {
-        return repository.exists(var1);
+        return repository.existsById(var1);
     }
 
     public long count() {
@@ -168,7 +169,7 @@ public abstract class AXBootBaseService<T, ID extends Serializable> extends AXBo
 
     @Transactional
     public void delete(ID var1) {
-        repository.delete(var1);
+        repository.deleteById(var1);
     }
 
     @Transactional
@@ -178,7 +179,7 @@ public abstract class AXBootBaseService<T, ID extends Serializable> extends AXBo
 
     @Transactional
     public void delete(Iterable<? extends T> var1) {
-        repository.delete(var1);
+        repository.deleteAll(var1);
     }
 
     @Transactional

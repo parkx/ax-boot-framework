@@ -1,20 +1,25 @@
 package com.chequer.axboot.core.parameter;
 
 
-import com.chequer.axboot.core.api.ApiException;
-import com.chequer.axboot.core.utils.ArrayUtils;
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.EntityPathBase;
-import com.querydsl.core.types.dsl.PathBuilder;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import com.chequer.axboot.core.api.ApiException;
+import com.chequer.axboot.core.utils.ArrayUtils;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.EntityPathBase;
+import com.querydsl.core.types.dsl.PathBuilder;
 
 public class RequestParams<T> {
 
@@ -110,7 +115,7 @@ public class RequestParams<T> {
         int page = getInt("pageNumber", 0);
         int size = getInt("pageSize", Integer.MAX_VALUE);
 
-        return new PageRequest(page, size, getSort());
+        return PageRequest.of(page, size, getSort());
     }
 
     public void addSort(String value, Sort.Direction direction) {
@@ -135,11 +140,11 @@ public class RequestParams<T> {
                 orders.add(new Sort.Order(Sort.Direction.fromString(sortValues[i + 1]), sortValues[i]));
             }
 
-            return new Sort(orders);
+            return Sort.by(orders);
         }
 
         if (ArrayUtils.isNotEmpty(sortOrders)) {
-            return new Sort(sortOrders);
+            return Sort.by(sortOrders);
         }
 
         return null;
