@@ -25,6 +25,7 @@ import java.util.zip.ZipOutputStream;
 
 @Service
 public class ProjectGenerator {
+	private String OS_FILE_SEPA = File.separator;
 
     public void generate(ProjectGenerateRequest projectGenerateRequest, HttpServletRequest request, HttpServletResponse response) throws IOException {
         String packageName = projectGenerateRequest.getPackageName().trim();
@@ -79,7 +80,8 @@ public class ProjectGenerator {
 
     public String getPath(String projectName, String packageName, File file) {
         String baseName = projectName + "/src/main";
-        String substract = "/WEB-INF/classes/templates";
+        //String substract = "/WEB-INF/classes/templates";
+        String substract = OS_FILE_SEPA+"WEB-INF"+OS_FILE_SEPA+"classes"+OS_FILE_SEPA+"templates";
 
         String name = FilenameUtils.getName(file.getName());
         String ext = FilenameUtils.getExtension(file.getName()).toLowerCase();
@@ -91,7 +93,7 @@ public class ProjectGenerator {
             return baseName + "/java/" + packageName.replace(".", "/") + path;
         }
 
-        if (path.startsWith("/root")) {
+        if (path.startsWith(OS_FILE_SEPA+"root")) {
             return projectName + "/" + path.substring(6);
         }
 
