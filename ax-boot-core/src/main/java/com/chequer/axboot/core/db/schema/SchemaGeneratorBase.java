@@ -1,6 +1,16 @@
 package com.chequer.axboot.core.db.schema;
 
-import com.chequer.axboot.core.config.AXBootContextConfig;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+
+import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Table;
+import javax.persistence.metamodel.EntityType;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
@@ -10,23 +20,13 @@ import org.hibernate.boot.registry.BootstrapServiceRegistryBuilder;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.internal.SessionFactoryImpl;
-import org.hibernate.metadata.ClassMetadata;
 import org.reflections.Reflections;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import com.chequer.axboot.core.config.AXBootContextConfig;
 
 public class SchemaGeneratorBase {
 
@@ -93,8 +93,9 @@ public class SchemaGeneratorBase {
 
     protected String getEntityClassName(String tableName) {
         SessionFactory sessionFactory = entityManagerFactory.unwrap(SessionFactory.class);
-        //Set<EntityType<?>> entities = sessionFactory.getMetamodel().getEntities();
+        Set<EntityType<?>> entities = sessionFactory.getMetamodel().getEntities();
 
+        /*
         Map<String, ClassMetadata> classMetadataMap = sessionFactory.getAllClassMetadata();
 
         for (String key : classMetadataMap.keySet()) {
@@ -115,8 +116,9 @@ public class SchemaGeneratorBase {
                 e.printStackTrace();
             }
         }
+        */
 
-        /*
+        /**/
         for (EntityType<?> entityType : entities) {
             Class<?> entityClass = entityType.getJavaType();
 
@@ -131,7 +133,7 @@ public class SchemaGeneratorBase {
                 }
             }
         }
-        */
+        
         return null;
     }
 }

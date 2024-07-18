@@ -1,5 +1,24 @@
 package com.chequer.axboot.core.domain.base;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.chequer.axboot.core.code.AXBootTypes;
 import com.chequer.axboot.core.db.mapper.ColumnToBeanPropertyRowMapper;
 import com.chequer.axboot.core.parameter.RequestParams;
@@ -9,23 +28,6 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPADeleteClause;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAUpdateClause;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
 
 public abstract class AXBootBaseService<T, ID extends Serializable> extends AXBootFilterService<T> {
@@ -156,7 +158,8 @@ public abstract class AXBootBaseService<T, ID extends Serializable> extends AXBo
     }
 
     public T findOne(ID var1) {
-        return repository.getOne(var1);
+    	Optional<T> obj = repository.findById(var1);
+        return obj.orElse(null);
     }
 
     public boolean exists(ID var1) {
