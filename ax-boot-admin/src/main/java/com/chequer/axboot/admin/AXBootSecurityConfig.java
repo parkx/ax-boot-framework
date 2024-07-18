@@ -112,14 +112,6 @@ public class AXBootSecurityConfig {
         return http.build();
     }
 
-    /*
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-    */
-
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
@@ -133,14 +125,6 @@ public class AXBootSecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration auth) throws Exception {
         return auth.getAuthenticationManager();
     }
-
-    
-    /*
-    @Override
-    protected AXBootUserDetailsService userDetailsService() {
-        return userDetailsService;
-    }
-    */
 
     class LogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler {
 
