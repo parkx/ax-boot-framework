@@ -1,7 +1,6 @@
 package com.chequer.axboot.admin.domain.user.auth.menu;
 
 import com.chequer.axboot.admin.domain.BaseService;
-import com.chequer.axboot.admin.domain.program.ProgramService;
 import com.chequer.axboot.admin.domain.program.menu.Menu;
 import com.chequer.axboot.admin.domain.program.menu.MenuService;
 import com.chequer.axboot.admin.domain.user.SessionUser;
@@ -17,9 +16,6 @@ import java.util.List;
 @Service
 public class AuthGroupMenuService extends BaseService<AuthGroupMenu, AuthGroupMenu.AuthGroupMenuId> {
     private AuthGroupMenuRepository authGroupMenuRepository;
-
-    @Inject
-    private ProgramService programService;
 
     @Inject
     private MenuService menuService;
