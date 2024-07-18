@@ -38,7 +38,6 @@ import com.chequer.axboot.core.utils.CookieUtils;
 @EnableGlobalMethodSecurity(securedEnabled = true, proxyTargetClass = true)
 @Configuration
 public class AXBootSecurityConfig {
-
     public static final String LOGIN_API = "/api/login";
     public static final String LOGOUT_API = "/api/logout";
     public static final String LOGIN_PAGE = "/jsp/login.jsp";
@@ -71,11 +70,8 @@ public class AXBootSecurityConfig {
     @Inject
     private AXBootTokenAuthenticationService tokenAuthenticationService;
 
-    @Inject
-    private AuthenticationManager authenticationManager;
-
     @Bean
-    public WebSecurityCustomizer configure() throws Exception {
+    public WebSecurityCustomizer webSecurityCustomizer() throws Exception {
     	return new WebSecurityCustomizer() {
 			@Override
 			public void customize(WebSecurity webSecurity) {
@@ -87,12 +83,17 @@ public class AXBootSecurityConfig {
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http
+        		.csrf().disable()
                 .anonymous()
                 .and()
+                
+                .headers().frameOptions().sameOrigin()
+                .and()
 
-                .authorizeRequests().anyRequest().hasRole(ROLE)
+                .authorizeRequests()
                 .antMatchers(HttpMethod.POST, LOGIN_API).permitAll()
                 .antMatchers(LOGIN_PAGE).permitAll()
+                .anyRequest().hasRole(ROLE)
                 .and()
 
                 .formLogin().loginPage(LOGIN_PAGE).permitAll()
@@ -103,8 +104,8 @@ public class AXBootSecurityConfig {
 
                 .exceptionHandling().authenticationEntryPoint(new AXBootAuthenticationEntryPoint())
                 .and()
-
-                .addFilterBefore(new AXBootLoginFilter(LOGIN_API, tokenAuthenticationService, userService, authenticationManager, new AXBootAuthenticationEntryPoint()), UsernamePasswordAuthenticationFilter.class)
+                .authenticationProvider(daoAuthenticationProvider())
+                .addFilterBefore(new AXBootLoginFilter(LOGIN_API, tokenAuthenticationService, userService, authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)), new AXBootAuthenticationEntryPoint()), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new AXBootAuthenticationFilter(tokenAuthenticationService), UsernamePasswordAuthenticationFilter.class)
                 .addFilterAfter(new AXBootLogbackMdcFilter(), UsernamePasswordAuthenticationFilter.class);
 
@@ -129,12 +130,11 @@ public class AXBootSecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
-        //auth.authenticationProvider(daoAuthenticationProvider());
-
-    	return authConfig.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration auth) throws Exception {
+        return auth.getAuthenticationManager();
     }
 
+    
     /*
     @Override
     protected AXBootUserDetailsService userDetailsService() {
