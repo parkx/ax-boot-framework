@@ -4,9 +4,7 @@ var gulp = require('gulp');
 var sass = require('gulp-sass');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
-var changed = require('gulp-changed');
 var plumber = require('gulp-plumber');
-var notify = require("gulp-notify");
 var babel = require('gulp-babel');
 var shell = require('gulp-shell');
 var spawn = require('child_process').spawn;
@@ -57,7 +55,7 @@ gulp.task('plugin update', shell.task([
 /**
  * JS
  */
-gulp.task('plugin-js', function () {
+gulp.task('plugin-js', async function () {
     var jss = [
         ASSETS_SRC + '/plugins/jquery/dist/jquery.js',
         ASSETS_SRC + '/plugins/ztree_v3/js/jquery.ztree.core.js',
@@ -79,7 +77,7 @@ gulp.task('plugin-js', function () {
         .pipe(gulp.dest(ASSETS + '/js'));
 });
 
-gulp.task('errorpage-js', function () {
+gulp.task('errorpage-js', async function () {
     var jss = [ASSETS_SRC + '/js/axboot/common/brokebot/*.js'];
 
     gulp.src(jss)
@@ -89,7 +87,7 @@ gulp.task('errorpage-js', function () {
         .pipe(gulp.dest(ASSETS_SRC + '/js/axboot/common'));
 });
 
-gulp.task('axboot-js', function () {
+gulp.task('axboot-js', async function () {
     var jss = [ASSETS_SRC + '/js/axboot/src/_axboot.js', ASSETS_SRC + '/js/axboot/src/modules/*.js'];
 
     gulp.src(jss)
@@ -107,16 +105,16 @@ gulp.task('axboot-js', function () {
         .pipe(gulp.dest(ASSETS + '/js/axboot/dist'));
 });
 
-gulp.task('axboot-initializr-deploy', function () {
+gulp.task('axboot-initializr-deploy', async function () {
     gulp.src([
         '!' + ASSETS_SRC + '/**/plugins/**/*',
         ASSETS_SRC + '/**/*'
-    ], {base: ASSETS_SRC})
+    ], {base: ASSETS_SRC, encoding: false})
         .pipe(gulp.dest('ax-boot-initialzr/src/main/resources/templates/webapp/assets'));
 
     gulp.src([
         WEBAPP + '/*.*'
-    ], {base: WEBAPP})
+    ], {base: WEBAPP, encoding: false})
         .pipe(gulp.dest('ax-boot-initialzr/src/main/resources/templates/webapp'));
 
     gulp.src([
@@ -129,7 +127,7 @@ gulp.task('axboot-initializr-deploy', function () {
         WEBAPP + '/swagger/**/*.*',
         WEBAPP + '/jsp/**/*.*',
         '!' + WEBAPP + '/jsp/**/not-authorized.jsp'
-    ], {base: WEBAPP})
+    ], {base: WEBAPP, encoding: false})
         .pipe(replace(/import=\"com\.chequer\.axboot\.admin/g, 'import="${basePackage}'))
         .pipe(gulp.dest('ax-boot-initialzr/src/main/resources/templates/webapp'));
 
@@ -149,7 +147,7 @@ gulp.task('axboot-initializr-deploy', function () {
 /**
  * SASS
  */
-gulp.task('scss', function () {
+gulp.task('scss', async function () {
 
     gulp.src(ASSETS_SRC + '/scss/arongi/axboot.scss')
         .pipe(plumber({errorHandler: errorAlert}))
@@ -159,7 +157,7 @@ gulp.task('scss', function () {
 
 });
 
-gulp.task('scss-ie9', function () {
+gulp.task('scss-ie9', async function () {
 
     gulp.src([
         ASSETS_SRC + '/scss/arongi/axboot-01.scss',
@@ -172,7 +170,7 @@ gulp.task('scss-ie9', function () {
 
 });
 
-gulp.task('dashboard-scss', function () {
+gulp.task('dashboard-scss', async function () {
     gulp.src(ASSETS_SRC + '/plugins/light-bootstrap-dashboard/scss/light-bootstrap-dashboard.scss')
         .pipe(plumber({errorHandler: errorAlert}))
         .pipe(sass({outputStyle: 'compressed'}))
@@ -180,7 +178,7 @@ gulp.task('dashboard-scss', function () {
         .pipe(gulp.dest(ASSETS + '/plugins/css/light-bootstrap-dashboard'));
 });
 
-gulp.task('import-ax5ui-file', function () {
+gulp.task('import-ax5ui-file', async function () {
     /*
      ax5ui 소스를 로컬에서 직접 복붙하는 타스크
      */
@@ -200,7 +198,7 @@ gulp.task('import-ax5ui-file', function () {
 /**
  * watch
  */
-gulp.task('watching', function () {
+gulp.task('watching', async function () {
 
     // PLUGIN-JS
     //gulp.watch(WEBAPP + '/plugins/**/*.js', ['plugin-js']);
@@ -212,7 +210,7 @@ gulp.task('watching', function () {
     gulp.watch(ASSETS_SRC + '/lang/*.*', ['language']);
 });
 
-gulp.task('default', function () {
+gulp.task('default', async function () {
     var process;
 
     //gulp.watch(WEBAPP + '/plugins/*.js', spawnChildren);

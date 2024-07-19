@@ -1,7 +1,6 @@
 package ${basePackage}.domain.user.auth.menu;
 
 import ${basePackage}.domain.BaseService;
-import ${basePackage}.domain.program.ProgramService;
 import ${basePackage}.domain.program.menu.Menu;
 import ${basePackage}.domain.program.menu.MenuService;
 import ${basePackage}.domain.user.SessionUser;
@@ -17,9 +16,6 @@ import java.util.List;
 @Service
 public class AuthGroupMenuService extends BaseService<AuthGroupMenu, AuthGroupMenu.AuthGroupMenuId> {
     private AuthGroupMenuRepository authGroupMenuRepository;
-
-    @Inject
-    private ProgramService programService;
 
     @Inject
     private MenuService menuService;

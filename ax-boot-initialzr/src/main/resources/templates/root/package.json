@@ -2,33 +2,33 @@
   "version": "2.0.0",
   "name": "axboot",
   "engines": {
-    "node": ">=0.10.0"
+    "node": "<=18.20.4"
   },
   "scripts": {
     "build": "babel assets/js -d lib",
     "postinstall": "node node_modules/bower/bin/bower install && gulp plugin-js"
   },
   "devDependencies": {
-    "babel-cli": "^6.0.0",
+    "babel-cli": "*",
     "babel-preset-es2015": "",
-    "bower": "^1.7.9",
-    "fs-finder": "^1.8.1",
+    "bower": "*",
+    "fs-finder": "*",
     "gulp": "*",
-    "gulp-babel": "^6.1.2",
+    "gulp-babel": "*",
     "gulp-changed": "*",
-    "gulp-clean": "^0.3.2",
+    "gulp-clean": "*",
     "gulp-concat": "*",
     "gulp-notify": "",
     "gulp-plumber": "",
     "gulp-replace": "",
-    "gulp-sass": "^2.1.1",
-    "gulp-shell": "^0.6.3",
+    "gulp-sass": "*",
+    "gulp-shell": "*",
     "gulp-sourcemaps": "",
-    "gulp-uglify": "^1.5.1",
+    "gulp-uglify": "*",
     "gulp-util": "*",
-    "js-beautify": "^1.5.10",
-    "markdown-it": "^8.1.0",
+    "js-beautify": "*",
+    "markdown-it": "*",
     "node-sass": "*",
-    "strip-indent": "^2.0.0"
+    "strip-indent": "*"
   }
 }

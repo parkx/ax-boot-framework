@@ -1,37 +1,43 @@
 package ${basePackage};
 
-import ${basePackage}.code.GlobalConstants;
-import ${basePackage}.domain.user.UserService;
-import ${basePackage}.logging.AXBootLogbackMdcFilter;
-import ${basePackage}.security.*;
-import com.chequer.axboot.core.utils.CookieUtils;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
+import java.io.IOException;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
+
+import ${basePackage}.code.GlobalConstants;
+import ${basePackage}.domain.user.UserService;
+import ${basePackage}.logging.AXBootLogbackMdcFilter;
+import ${basePackage}.security.AXBootAuthenticationEntryPoint;
+import ${basePackage}.security.AXBootAuthenticationFilter;
+import ${basePackage}.security.AXBootLoginFilter;
+import ${basePackage}.security.AXBootTokenAuthenticationService;
+import ${basePackage}.security.AXBootUserDetailsService;
+import com.chequer.axboot.core.utils.CookieUtils;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, proxyTargetClass = true)
 @Configuration
-public class AXBootSecurityConfig extends WebSecurityConfigurerAdapter {
-
+public class AXBootSecurityConfig {
     public static final String LOGIN_API = "/api/login";
     public static final String LOGOUT_API = "/api/logout";
     public static final String LOGIN_PAGE = "/jsp/login.jsp";
@@ -64,25 +70,30 @@ public class AXBootSecurityConfig extends WebSecurityConfigurerAdapter {
     @Inject
     private AXBootTokenAuthenticationService tokenAuthenticationService;
 
-
-    public AXBootSecurityConfig() {
-        super(true);
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() throws Exception {
+    	return new WebSecurityCustomizer() {
+			@Override
+			public void customize(WebSecurity webSecurity) {
+				webSecurity.ignoring().antMatchers(ignorePages);
+			}
+		};
     }
 
-    @Override
-    public void configure(WebSecurity webSecurity) throws Exception {
-        webSecurity.ignoring().antMatchers(ignorePages);
-    }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http
+        		.csrf().disable()
                 .anonymous()
                 .and()
+                
+                .headers().frameOptions().sameOrigin()
+                .and()
 
-                .authorizeRequests().anyRequest().hasRole(ROLE)
+                .authorizeRequests()
                 .antMatchers(HttpMethod.POST, LOGIN_API).permitAll()
                 .antMatchers(LOGIN_PAGE).permitAll()
+                .anyRequest().hasRole(ROLE)
                 .and()
 
                 .formLogin().loginPage(LOGIN_PAGE).permitAll()
@@ -93,17 +104,12 @@ public class AXBootSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .exceptionHandling().authenticationEntryPoint(new AXBootAuthenticationEntryPoint())
                 .and()
-
-                .addFilterBefore(new AXBootLoginFilter(LOGIN_API, tokenAuthenticationService, userService, authenticationManager(), new AXBootAuthenticationEntryPoint()), UsernamePasswordAuthenticationFilter.class)
+                .authenticationProvider(daoAuthenticationProvider())
+                .addFilterBefore(new AXBootLoginFilter(LOGIN_API, tokenAuthenticationService, userService, authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)), new AXBootAuthenticationEntryPoint()), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new AXBootAuthenticationFilter(tokenAuthenticationService), UsernamePasswordAuthenticationFilter.class)
                 .addFilterAfter(new AXBootLogbackMdcFilter(), UsernamePasswordAuthenticationFilter.class);
 
-    }
-
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
+        return http.build();
     }
 
     @Bean
@@ -115,14 +121,9 @@ public class AXBootSecurityConfig extends WebSecurityConfigurerAdapter {
         return daoAuthenticationProvider;
     }
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(daoAuthenticationProvider());
-    }
-
-    @Override
-    protected AXBootUserDetailsService userDetailsService() {
-        return userDetailsService;
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration auth) throws Exception {
+        return auth.getAuthenticationManager();
     }
 
     class LogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler {

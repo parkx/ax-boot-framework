@@ -1,15 +1,15 @@
 package ${basePackage}.domain.program.menu;
 
-        import ${basePackage}.domain.BaseService;
-        import com.chequer.axboot.core.parameter.RequestParams;
-        import com.chequer.axboot.core.utils.ArrayUtils;
-        import com.querydsl.core.BooleanBuilder;
-        import org.springframework.stereotype.Service;
-        import org.springframework.transaction.annotation.Transactional;
+import ${basePackage}.domain.BaseService;
+import com.chequer.axboot.core.parameter.RequestParams;
+import com.chequer.axboot.core.utils.ArrayUtils;
+import com.querydsl.core.BooleanBuilder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-        import javax.inject.Inject;
-        import java.util.ArrayList;
-        import java.util.List;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Service
